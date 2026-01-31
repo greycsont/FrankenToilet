@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using BepInEx.Logging;
 using JetBrains.Annotations;
+using System;
 
 namespace FrankenToilet.Core;
 
@@ -23,14 +24,21 @@ public static class LogHelper
     {
         if (message is not string str) return message;
         var stackFrame = new StackTrace().GetFrame(2); // 0 is this method, 1 is caller (Log), 2 is the original caller
-        var name = stackFrame.HasMethod()
-                       ? stackFrame.GetMethod()
-                                   .DeclaringType
-                                  ?.Namespace
-                                  ?.Split('.')[1]
-                       : null;
-        return string.IsNullOrEmpty(name)
-                   ? message
-                   : $"[{name}] {str}";
+        try
+        {
+            var name = stackFrame.HasMethod()
+                ? stackFrame.GetMethod()
+                .DeclaringType
+                ?.Namespace
+                ?.Split('.')[1]
+                : null;
+            return string.IsNullOrEmpty(name)
+                ? message
+                : $"[{name}] {str}";
+        }
+        catch (IndexOutOfRangeException)
+        {
+            return message;
+        }
     }
 }
