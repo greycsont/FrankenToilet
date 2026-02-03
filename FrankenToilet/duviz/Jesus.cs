@@ -29,9 +29,9 @@ public class Jesus : MonoBehaviour
     {
         if (NewMovement.instance != null)
         {
-            if (NewMovement.instance.hp <= 50) cooldown -= Time.unscaledDeltaTime;
-            if (NewMovement.instance.hp <= 25) cooldown -= Time.unscaledDeltaTime;
-            if (NewMovement.instance.hp <= 15) cooldown -= Time.unscaledDeltaTime;
+            if (NewMovement.instance.hp <= 50*5) cooldown -= Time.unscaledDeltaTime;
+            if (NewMovement.instance.hp <= 25*5) cooldown -= Time.unscaledDeltaTime;
+            if (NewMovement.instance.hp <= 15*5) cooldown -= Time.unscaledDeltaTime;
             if (NewMovement.instance.hp <= 0) cooldown -= Time.unscaledDeltaTime;
             else deathCount = 0;
             if (NewMovement.instance.hp == 1) cooldown = 2;

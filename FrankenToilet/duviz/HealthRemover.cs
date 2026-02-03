@@ -36,17 +36,73 @@ public class HealthPatch
 public class NewMovementHurtPatch
 {
     [HarmonyPrefix]
-    public static void Prefix(HealthBar __instance, ref int damage)
+    public static void Prefix(NewMovement __instance, ref int damage)
     {
-        HealthRemover.percentage = Mathf.Min(damage + UnityEngine.Random.Range(0, 1f) + HealthRemover.percentage, 5000);
-        damage *= (int)MathF.Min(HealthRemover.percentage / 100 + 1, 100000);
+        HealthRemover.percentage = Mathf.Min(damage + UnityEngine.Random.Range(0, 1f) + HealthRemover.percentage, 5000) * 1.5f;
+        damage *= (int)MathF.Min(HealthRemover.percentage / 75 + 1, 100000);
     }
     [HarmonyPostfix]
-    public static void Post(HealthBar __instance)
+    public static void Post(NewMovement __instance)
     {
         NewMovement.instance.rb.velocity += new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)) * HealthRemover.percentage; ;
 
-        if (HealthRemover.percentage > 5000)
+        if (HealthRemover.percentage > 1000)
             DeltaruneExplosion.ExplodePlayer();
+    }
+}
+
+[PatchOnEntry]
+[HarmonyPatch(typeof(NewMovement), "Respawn")]
+public class NewMovementRespawnPatch
+{
+    [HarmonyPostfix]
+    public static void Post(NewMovement __instance)
+    {
+        __instance.hp *= 5;
+    }
+}
+
+[PatchOnEntry]
+[HarmonyPatch(typeof(NewMovement), "Start")]
+public class NewMovementStartPatch
+{
+    [HarmonyPostfix]
+    public static void Post(NewMovement __instance)
+    {
+        __instance.hp *= 5;
+    }
+}
+
+[PatchOnEntry]
+[HarmonyPatch(typeof(NewMovement), "GetHealth")]
+public class NewMovementGetHealthPatch
+{
+    [HarmonyPrefix]
+    public static bool Prefix(NewMovement __instance, int health, bool silent, bool fromExplosion = false, bool bloodsplatter = true)
+    {
+        if (!__instance.dead && (!__instance.exploded || !fromExplosion))
+        {
+            float num = (float)health;
+            float num2 = 500f;
+            if (num < 1f)
+                num = 1f;
+            if ((float)__instance.hp <= num2)
+            {
+                if ((float)__instance.hp + num < num2 - (float)Mathf.RoundToInt(__instance.antiHp))
+                    __instance.hp += Mathf.RoundToInt(num);
+                else if ((float)__instance.hp != num2 - (float)Mathf.RoundToInt(__instance.antiHp))
+                    __instance.hp = Mathf.RoundToInt(num2) - Mathf.RoundToInt(__instance.antiHp);
+                __instance.hpFlash.Flash(1f);
+                if (!silent && health > 5)
+                {
+                    if (__instance.greenHpAud == null)
+                        __instance.greenHpAud = __instance.hpFlash.GetComponent<AudioSource>();
+                    __instance.greenHpAud.Play();
+                }
+            }
+            if (!silent && health > 5 && MonoSingleton<PrefsManager>.Instance.GetBoolLocal("bloodEnabled", false))
+                GameObject.Instantiate<GameObject>(__instance.scrnBlood, __instance.fullHud.transform);
+        }
+        return false;
     }
 }
