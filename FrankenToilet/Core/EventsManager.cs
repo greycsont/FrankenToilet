@@ -1,10 +1,10 @@
-﻿using FrankenToilet.Core;
+﻿using FrankenToilet.duviz;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace FrankenToilet.duviz.events;
+namespace FrankenToilet.Core;
 
 /// <summary> You can see an example of an event in the EventsCreator.cs </summary>
 public class EventsManager : MonoBehaviour
@@ -15,8 +15,6 @@ public class EventsManager : MonoBehaviour
     /// <summary> Time between events (10 random seconds range) </summary>
     static float eventCycle = 15;
 
-    float timer = 0;
-
     /// <summary> Adds a event with that name and returns the UnityEvent of it </summary>
     /// <returns> UnityEvent of the created event </returns>
     public static UnityEvent AddEvent(string eName)
@@ -26,12 +24,7 @@ public class EventsManager : MonoBehaviour
         return e.Item2;
     }
 
-    static void CreatePopup(string eName)
-    {
-        GameObject canvas = Instantiate(Bundle.bundle.LoadAsset<GameObject>("EventCanvas"));
-        canvas.AddComponent<DestroyInTime>();
-        canvas.GetComponentInChildren<TMP_Text>().text = $"EVENT: {eName.ToUpper()}";
-    }
+    float timer = 0;
 
     public void Update()
     {
@@ -51,5 +44,12 @@ public class EventsManager : MonoBehaviour
             e.Item2.Invoke();
             CreatePopup(e.Item1);
         }
+    }
+
+    static void CreatePopup(string eName)
+    {
+        GameObject canvas = Instantiate(Bundle.bundle.LoadAsset<GameObject>("EventCanvas"));
+        canvas.AddComponent<DestroyInTime>();
+        canvas.GetComponentInChildren<TMP_Text>().text = $"EVENT: {eName.ToUpper()}";
     }
 }
