@@ -14,7 +14,7 @@ namespace FrankenToilet.prideunique;
 public static class MachinePatch
 {
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(Machine.GoLimp), new Type[] { typeof(bool) })]
+    [HarmonyPatch( nameof(Machine.GoLimp), new Type[] { typeof(bool) } ) ]
     private static void Prefix(Machine __instance)
     {
         __instance.aud = __instance.gameObject.GetOrAddComponent<AudioSource>();
