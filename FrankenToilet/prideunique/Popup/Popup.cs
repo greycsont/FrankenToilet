@@ -23,13 +23,15 @@ public class Popup : MonoBehaviour
             source.spatialBlend = 0f;
             source.Play();
         }
+        Destroy(Parent);
+    }
 
+    private void OnDestroy()
+    {
         if (Popups.RenderTextures.TryGetValue(Parent, out var renderTexture))
         {
             renderTexture.Release();
             Popups.RenderTextures.Remove(Parent);
         }
-
-        DestroyObject(Parent);
     }
 }

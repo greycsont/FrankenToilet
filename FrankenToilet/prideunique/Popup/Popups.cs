@@ -13,10 +13,10 @@ using static UnityEngine.GraphicsBuffer;
 namespace FrankenToilet.prideunique;
 public static class Popups
 {
-    private static GameObject MainPrefab;
-    private static List<VideoClip> VideoClips = new List<VideoClip>();
+    public static GameObject MainPrefab;
+    public static List<VideoClip> VideoClips = new List<VideoClip>();
     
-    private static RenderTexture BaseRenderTexture;
+    public static RenderTexture BaseRenderTexture;
     public static Dictionary<GameObject, RenderTexture> RenderTextures = new Dictionary<GameObject, RenderTexture>();
 
     public static AudioClip VideoCloseSound;
@@ -26,7 +26,7 @@ public static class Popups
         if (!AssetsController.AssetsLoaded)
             return;
 
-        if (!CameraController.Instance)
+        if (!CameraController.Instance || !OptionsMenuToManager.Instance)
             return;
 
         PopupCloser.Instance.Awake();
@@ -46,6 +46,8 @@ public static class Popups
         }
 
         CoroutineRunner.Run(PopupHandler());
+
+        FoxyPopup.Init();
     }
 
     private static IEnumerator PopupHandler()
