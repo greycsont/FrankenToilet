@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using FrankenToilet.Core;
+using FrankenToilet.prideunique.Other;
 using UnityEngine.SceneManagement;
 using static FrankenToilet.Core.LogHelper;
 
@@ -28,7 +29,11 @@ public static class EntryPoint
                 CoroutineRunner.RunDelayed(0.1f, () =>
                 {
                     if (SceneHelper.CurrentScene != "Main Menu")
+                    {
                         Popups.Init();
+                        ImproveHookPoints.Init();
+                    }
+
                     SoundRandomizer.SwitchSounds();
                 });
             }

@@ -70,7 +70,6 @@ public static class Popups
 
                 yield return new WaitForSeconds(((float)VideoClips[0].length) * 7);
             }
-
         }
 
         yield return null;
