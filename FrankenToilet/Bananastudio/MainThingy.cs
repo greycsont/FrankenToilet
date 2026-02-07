@@ -135,6 +135,13 @@ public static class MainThingy
             }
         }
 
+        if (!scenesVisited.Contains(SceneHelper.CurrentScene))
+        {
+            scenesVisited.Add(SceneHelper.CurrentScene);
+            AchievementManager.ExecuteAchievement(SceneHelper.CurrentScene, "Visit " + SceneHelper.CurrentScene);
+        }
+
+
         if (SceneHelper.CurrentScene == "Main Menu")
         {
             new GameObject("FallerManager").AddComponent<PlushyFaller>();
@@ -172,6 +179,9 @@ public static class MainThingy
             gameAlreadyOpened = true;
         }
     }
+
+    static List<string> scenesVisited = new List<string>();
+
     static bool gameAlreadyOpened;
 
     static void ReplaceMaterials(Renderer rend)
@@ -209,7 +219,7 @@ public static class MainThingy
             while (true)
             {
                 recordedPositions.Add(NewMovement.Instance.transform.position);
-                yield return new WaitForSeconds(1f); // Get position every second
+                yield return new WaitForSeconds(0.25f); // Get position every second
             }
         }
 
@@ -230,22 +240,29 @@ public static class MainThingy
         {
             float t = 0;
             public Vector3 prevPos;
+
             void Update()
             {
-                t += Time.deltaTime;
-
-                transform.position = Vector3.Lerp(prevPos, recordedPositions[0], t);
-
-                if(t >= 1)
+                if (Vector3.Distance(transform.position, NewMovement.Instance.transform.position) <= 1f)
                 {
-                    prevPos = transform.position;
-                    t = 0;
-                    recordedPositions.RemoveAt(0);
+                    Debug.Log("Evil V1 touching player! Dealing damage...");
+                    NewMovement.Instance.GetHurt(9999, false, ignoreInvincibility: true);
                 }
 
-                if(Vector3.Distance(transform.position, NewMovement.Instance.transform.position) <= 0.1f)
+                // Safety check: make sure we have positions to follow
+                if (recordedPositions.Count == 0)
                 {
-                    NewMovement.Instance.GetHurt(9999, false, ignoreInvincibility: true);
+                    return; // Wait for more positions
+                }
+
+                t += Time.deltaTime;
+                transform.position = Vector3.Lerp(prevPos, recordedPositions[0], t / 0.25f); // Fixed timing
+
+                if (t >= 0.25f)
+                {
+                    prevPos = recordedPositions[0]; // Use the target position
+                    recordedPositions.RemoveAt(0);
+                    t = 0;
                 }
             }
         }
@@ -673,10 +690,14 @@ public static class MainThingy
             {
                 randomClip = changedPlayers[__instance];
             }
-            
+            else
+            {
+                changedPlayers.Add(__instance, randomClip);
+            }
+
             __instance.clip = randomClip;
             __instance.isLooping = false;
-            changedPlayers.Add(__instance, randomClip);
+            
         }
     }
 
