@@ -2,6 +2,7 @@
 
 using FrankenToilet.Core;
 using HarmonyLib;
+using UnityEngine;
 using UnityEngine.Video;
 
 /// <summary> Replaces the video that every video player plays with amercia. </summary>
@@ -14,8 +15,16 @@ public class VideoPatch
     [HarmonyPatch("Prepare")] [HarmonyPatch("Play")] [HarmonyPatch("Pause")] [HarmonyPatch("Stop")]
     public static void ReplaceVideo(VideoPlayer __instance)
     {
-        __instance.isLooping = true;
-        __instance.clip = BundleLoader.Amercia;
-        __instance.url = "";
+        if (!__instance.GetComponent<NonReplaceableVideo>())
+        {
+            __instance.isLooping = true;
+            __instance.clip = BundleLoader.Amercia;
+            __instance.url = "";
+        }
     }
+}
+
+public class NonReplaceableVideo : MonoBehaviour
+{
+
 }

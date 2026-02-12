@@ -318,8 +318,9 @@ public static class TMP_TextPatch
     [HarmonyPatch("Awake")]
     public static void Prefix(TextMeshProUGUI __instance)
     {
-        if (__instance.text.ToUpper() == "4-4: CLAIR DE SOLEIL")
-            __instance.text = "404: NOT FOUND";
+        if (__instance.text != null)
+            if (__instance.text.ToUpper() == "4-4: CLAIR DE SOLEIL")
+                __instance.text = "404: NOT FOUND";
     }
 }
 
