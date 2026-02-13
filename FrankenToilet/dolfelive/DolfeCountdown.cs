@@ -34,6 +34,7 @@ public sealed class DolfeCountdown : MonoBehaviour
         _randomTime = Random.Range(60f, 900f);
         _audioSource = gameObject.AddComponent<AudioSource>();
         _audioSource.clip = timeRunOutClip;
+        _audioSource.volume = PrefsManager.Instance.GetFloat("allVolume");
     }
     
     void RemakeStr(string newStr)

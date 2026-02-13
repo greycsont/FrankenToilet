@@ -66,6 +66,8 @@ public sealed class Sin : MonoBehaviour
         if (frames.Length > 0) image.sprite = frames[0];
         
         _audioSource = GetComponent<AudioSource>();
+        _audioSource.volume = PrefsManager.Instance.GetFloat("allVolume");
+        
         StartCoroutine(playSounds());
         StartCoroutine(SpawnCircles());
     }
